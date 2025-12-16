@@ -1,11 +1,11 @@
 -- Virgin Hotels Performance Portal Database Schema
 
--- Enable UUID extension
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- Enable pgcrypto extension for gen_random_uuid()
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- Create hotels table
 CREATE TABLE IF NOT EXISTS hotels (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     location TEXT NOT NULL,
     brand TEXT NOT NULL CHECK (brand IN ('virgin_hotels', 'virgin_limited_edition')),
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS hotels (
 
 -- Create users table
 CREATE TABLE IF NOT EXISTS users (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email TEXT UNIQUE NOT NULL,
     full_name TEXT NOT NULL,
     role TEXT NOT NULL DEFAULT 'viewer' CHECK (role IN ('administrator', 'editor', 'viewer')),
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Create user hotel assignments table
 CREATE TABLE IF NOT EXISTS user_hotel_assignments (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     hotel_id UUID NOT NULL REFERENCES hotels(id) ON DELETE CASCADE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS user_hotel_assignments (
 
 -- Create STR/STAR Performance Metrics table
 CREATE TABLE IF NOT EXISTS str_data (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     hotel_id UUID NOT NULL REFERENCES hotels(id) ON DELETE CASCADE,
     period_type TEXT NOT NULL CHECK (period_type IN ('weekly', 'monthly')),
     period_start DATE NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS str_data (
 
 -- Create Web Analytics Data table
 CREATE TABLE IF NOT EXISTS web_analytics_data (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     hotel_id UUID NOT NULL REFERENCES hotels(id) ON DELETE CASCADE,
     period_type TEXT NOT NULL CHECK (period_type IN ('weekly', 'monthly')),
     period_start DATE NOT NULL,
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS web_analytics_data (
 
 -- Create Paid Media Data table
 CREATE TABLE IF NOT EXISTS paid_media_data (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     hotel_id UUID NOT NULL REFERENCES hotels(id) ON DELETE CASCADE,
     period_type TEXT NOT NULL CHECK (period_type IN ('weekly', 'monthly')),
     period_start DATE NOT NULL,
@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS paid_media_data (
 
 -- Create Annual Strategies table
 CREATE TABLE IF NOT EXISTS annual_strategies (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     hotel_id UUID NOT NULL REFERENCES hotels(id) ON DELETE CASCADE,
     year INTEGER NOT NULL,
     strategy_summary TEXT,
@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS annual_strategies (
 
 -- Create Quarterly Strategies table
 CREATE TABLE IF NOT EXISTS quarterly_strategies (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     hotel_id UUID NOT NULL REFERENCES hotels(id) ON DELETE CASCADE,
     annual_strategy_id UUID REFERENCES annual_strategies(id) ON DELETE CASCADE,
     year INTEGER NOT NULL,
@@ -132,7 +132,7 @@ CREATE TABLE IF NOT EXISTS quarterly_strategies (
 
 -- Create Tactics table
 CREATE TABLE IF NOT EXISTS tactics (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     hotel_id UUID NOT NULL REFERENCES hotels(id) ON DELETE CASCADE,
     quarterly_strategy_id UUID REFERENCES quarterly_strategies(id) ON DELETE SET NULL,
     discipline TEXT NOT NULL CHECK (discipline IN ('sales', 'revenue_management', 'ecommerce')),
@@ -147,7 +147,7 @@ CREATE TABLE IF NOT EXISTS tactics (
 
 -- Create Weekly Updates (5:15 Updates) table
 CREATE TABLE IF NOT EXISTS weekly_updates (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     hotel_id UUID NOT NULL REFERENCES hotels(id) ON DELETE CASCADE,
     week_start DATE NOT NULL,
     week_end DATE NOT NULL,
