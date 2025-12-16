@@ -62,17 +62,17 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const { data: { session } } = await supabase.auth.getSession()
+  const { data: { user }, error } = await supabase.auth.getUser()
 
-  // If no session and not on login page, redirect to login
-  if (!session && !request.nextUrl.pathname.startsWith('/login')) {
+  // If no user and not on login page, redirect to login
+  if ((!user || error) && !request.nextUrl.pathname.startsWith('/login')) {
     const redirectUrl = request.nextUrl.clone()
     redirectUrl.pathname = '/login'
     return NextResponse.redirect(redirectUrl)
   }
 
-  // If has session and on login page, redirect to home
-  if (session && request.nextUrl.pathname.startsWith('/login')) {
+  // If has user and on login page, redirect to home
+  if (user && !error && request.nextUrl.pathname.startsWith('/login')) {
     const redirectUrl = request.nextUrl.clone()
     redirectUrl.pathname = '/'
     return NextResponse.redirect(redirectUrl)
