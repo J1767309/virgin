@@ -102,3 +102,48 @@ export function getDisciplineDisplayName(discipline: string): string {
       return discipline
   }
 }
+
+const hotelImageMap: Record<string, string> = {
+  // Virgin Hotels
+  'virgin hotels dallas': 'dallas.jpg',
+  'virgin hotels edinburgh': 'edinburgh.jpg',
+  'virgin hotels glasgow': 'edinburgh.jpg', // Use Edinburgh as fallback
+  'virgin hotels london shoreditch': 'london-shoreditch.jpg',
+  'virgin hotels nashville': 'nashville.jpg',
+  'virgin hotels new orleans': 'new-orleans.jpg',
+  'virgin hotels new york': 'new-york.jpg',
+  'virgin hotels las vegas': 'new-york.jpg', // Use NYC as fallback
+  'virgin hotels chicago': 'nashville.jpg', // Use Nashville as fallback
+  'virgin hotels san francisco': 'new-york.jpg', // Use NYC as fallback
+  // Virgin Limited Edition
+  'necker island': 'necker-island.jpg',
+  'kasbah tamadot': 'kasbah-tamadot.jpg',
+  'ulusaba': 'ulusaba.jpg',
+  'mahali mzuri': 'mahali-mzuri.jpg',
+  'mont rochelle': 'mont-rochelle.jpg',
+  'the lodge verbier': 'the-lodge.webp',
+  'son bunyola': 'son-bunyola.jpg',
+  'moskito island': 'necker-island.jpg', // Use Necker as fallback
+  'branson estate': 'branson-estate.jpg',
+  'the branson estate': 'branson-estate.jpg',
+  'finch hattons': 'finch-hattons.jpg',
+}
+
+export function getHotelImage(hotelName: string): string {
+  const normalizedName = hotelName.toLowerCase().trim()
+
+  // Check for exact match first
+  if (hotelImageMap[normalizedName]) {
+    return `/hotels/${hotelImageMap[normalizedName]}`
+  }
+
+  // Check for partial match
+  for (const [key, value] of Object.entries(hotelImageMap)) {
+    if (normalizedName.includes(key) || key.includes(normalizedName)) {
+      return `/hotels/${value}`
+    }
+  }
+
+  // Default fallback image
+  return '/hotels/nashville.jpg'
+}
